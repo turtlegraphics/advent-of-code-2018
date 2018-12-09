@@ -3,8 +3,8 @@ https://adventofcode.com/2018
 
 Done for speed, not style!
 
-          --------Part 1--------   --------Part 2--------
-    Day       Time   Rank  Score       Time   Rank  Score
+        --------Part 1--------   --------Part 2--------
+    Day     Time   Rank  Score       Time   Rank  Score
     9   00:47:18    884      0   00:48:20    322      0
     8   00:11:31    279      0   00:26:18    468      0
     7   00:15:10    277      0   00:52:02    435      0
