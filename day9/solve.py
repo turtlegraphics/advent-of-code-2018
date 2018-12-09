@@ -1,13 +1,13 @@
 import sys
 
 if len(sys.argv) != 3:
-    print 'solve players marbles'
+    print 'solve players maxmarble'
     sys.exit()
 
 players = int(sys.argv[1])
 marbles = int(sys.argv[2])
 
-print players,'players',marbles,'marbles'
+print players,'players, maxmarble =',marbles
 
 class Marble:
     def __init__(self,val):
@@ -27,25 +27,16 @@ class Circle:
         self.current = self.first
 
     def __str__(self):
-        if self.first == None:
-            return '--empty--'
-
         out = ''
         cur = self.first
-
-        if cur == self.current:
-            out += '('+str(cur)+')'
-        else:
-            out += ' '+str(cur)+' '
-        cur = cur.next
-
-        while cur != self.first:
+        while True:
             if cur == self.current:
                 out += '('+str(cur)+')'
             else:
                 out += ' '+str(cur)+' '
             cur = cur.next
-
+            if cur == self.first:
+                break
         return out
 
     def add(self,marble):
@@ -75,6 +66,6 @@ scores = [0]*players
 for m in range(marbles+1)[1:]:
    scores[player] += game.add(Marble(m))
    player = (player + 1) % players
+#   print game
 
-print scores
 print max(scores)
