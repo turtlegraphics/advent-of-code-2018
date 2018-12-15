@@ -23,20 +23,22 @@ class Unit(Box):
         Box.__init__(self,race)
         self.hp = 200
         self.moved = False
+        self.power = 3
 
     def __str__(self):
         return color.fade(self.c,self.hp)
 
-    def hurt(self):
+    def hurt(self,amount):
         """Returns True if killed."""
-        self.hp -= 3
+        self.hp -= amount
         if self.hp <= 0:
             return True
         return False
 
 class Elf(Unit):
-    def __init__(self):
+    def __init__(self,power):
         Unit.__init__(self,'E')
+        self.power = power
 
     def enemy(self):
         return Gnome

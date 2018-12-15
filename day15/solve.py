@@ -3,7 +3,7 @@ from collections import deque
 from box import *
 
 class Game:
-    def __init__(self,lines):
+    def __init__(self,lines,elfpower):
         self.board = []
         self.combatants = {Elf:0, Gnome:0}
         for line in lines:
@@ -14,7 +14,7 @@ class Game:
                 elif c == '.':
                     row.append(Empty())
                 elif c == 'E':
-                    row.append(Elf())
+                    row.append(Elf(elfpower))
                     self.combatants[Elf] += 1
                 elif c == 'G':
                     row.append(Gnome())
@@ -149,16 +149,28 @@ class Game:
     def attack(self,startpos):
         """Make an attack if possible. Return True if attack happened."""
         me = self[startpos]
+        bestn = None
+        besthp = 300
         for n in self.neighbors(startpos):
             if isinstance(self[n],me.enemy()):
-#                print me,'at',startpos,'attacked',self[n],'at',n
-                killed = self[n].hurt()
-                if killed:
-#                    print me,'killed',self[n],'!!!!'
-                    self.combatants[me.enemy()] -= 1
-                    self[n] = Empty()
-                return True
-        return False
+                if self[n].hp < besthp:
+                    besthp = self[n].hp
+                    bestn = n
+
+        if bestn == None:
+            return False
+
+#       print me,'at',startpos,'attacked',self[n],'at',n
+        killed = self[bestn].hurt(me.power)
+        if killed:
+#           print me,'killed',self[n],'!!!!'
+            if me.enemy() == Elf:
+                deadelf()
+
+            self.combatants[me.enemy()] -= 1
+            self[bestn] = Empty()
+
+        return True
 
     def victor(self):
         if self.combatants[Elf] == 0:
@@ -167,31 +179,53 @@ class Game:
             return Elf
         return None
 
-filename = 'input.txt'
-if len(sys.argv) > 1:
+def fight(g):
+    round = 0
+
+    while not g.victor():
+        print 'round',round
+        print(g)
+        for u in g.units(Unit):
+            if g.victor():
+                return round
+            if not g[u].moved:
+                if not g.attack(u):
+                    g.move(u)
+        round += 1
+        for u in g.units(Unit):
+            g[u].moved = False
+
+    return round
+
+
+allow_dead_elves = True
+def deadelf():
+    """Report a dead elf."""
+    if allow_dead_elves:
+        return
+    sys.stderr.write('AN ELF HAS DIED!!!!\n')
+    sys.exit(1)
+
+usage = """
+usage:
+   solve.py filename [elfpower]
+"""
+
+elfpower = 3
+
+try:
     filename = sys.argv[1]
+    if len(sys.argv) > 2:
+        elfpower = int(sys.argv[2])
+        allow_dead_elves = False
+except:
+    sys.stderr.write(usage)
+    sys.exit()
 
 data = open(filename).readlines()
+g  = Game(data,elfpower)
 
-g  = Game(data)
-round = 0
-while True:
-    print 'round',round
-    print(g)
-    for u in g.units(Unit):
-        if not g[u].moved:
-            if not g.attack(u):
-                g.move(u)
-        if g.victor():
-            break
-    if g.victor():
-        break
-
-    for u in g.units(Unit):
-        g[u].moved = False
-
-    round += 1
-
+rounds = fight(g)
 
 print '='*30
 print 'Elves win!' if g.victor() == Elf else 'Gnomes win!'
@@ -200,4 +234,4 @@ print(g)
 totalhp = 0
 for u in g.units(g.victor()):
     totalhp += g[u].hp
-print 'Outcome:',round,'*',totalhp,'=',round*totalhp
+print 'Outcome:',rounds,'*',totalhp,'=',rounds*totalhp
