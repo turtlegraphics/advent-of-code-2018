@@ -35,12 +35,12 @@ class Game:
         """Return a list of valid neighbors of pos"""
         (y,x) = pos
         n = []
+        if y-1 > 0 and self[y-1,x] != '#':
+            n.append( (y-1,x) )
         if x-1 > 0 and self[y,x-1] != '#':
             n.append( (y,x-1) )
         if x+1 < self.width and self[y,x+1] != '#':
             n.append( (y,x+1) )
-        if y-1 > 0 and self[y-1,x] != '#':
-            n.append( (y-1,x) )
         if y+1 < self.height and self[y+1,x] != '#':
             n.append( (y+1,x) )
         return n
@@ -141,14 +141,24 @@ class Game:
         assert(self[pos] == '.')
         self[startpos] = '.'
         self[pos] = me
+        # try to attack
+        self.attack(pos)
 
     def attack(self,startpos):
         """Make an attack if possible. Return True if attack happened."""
         me = self[startpos]
         enemy = 'G' if me == 'E' else 'E'
+        for n in self.neighbors(startpos):
+            if self[n] == enemy:
+                print me,'at',startpos,'attacked',enemy,'at',n
+                return True
+        return False
 
 g  = Game(data)
-print(g)
-for u in g.units(['E','G']):
-    g.move(u)
-print(g)
+while True:
+    print(g)
+    raw_input()
+    for u in g.units(['E','G']):
+        if not g.attack(u):
+            g.move(u)
+            
