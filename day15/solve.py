@@ -1,5 +1,6 @@
 import sys
 from collections import deque
+import color
 
 filename = 'input.txt'
 if len(sys.argv) > 1:
@@ -7,7 +8,7 @@ if len(sys.argv) > 1:
 
 data = open(filename).readlines()
 
-INF = 32768  # "infinity" - bigger than the board
+races = ['E','G']
 
 class Game:
     def __init__(self,lines):
@@ -17,6 +18,15 @@ class Game:
             self.board.append(list(line))
         self.width = len(self.board[0])
         self.height = len(lines)
+
+        self.hp = [[0]*self.width for y in range(self.height)]
+
+        for p in self:
+            if self[p] in races:
+                self.hp[p[0]][p[1]] = min(p[1]*10,200)  # change to 200
+
+        print self.hp
+
 
     def __getitem__(self, pos):
         """Return the board at position pos = (y,x)"""
@@ -47,10 +57,13 @@ class Game:
 
     def __str__(self):
         out = str(self.width) + 'x' + str(self.height)
-        for row in self.board:
+        for y in range(self.height):
             out += '\n'
-            for v in row:
-                if isinstance(v,int):
+            for x in range(self.width):
+                v = self[y,x]
+                if v in races:
+                    c = color.fade(v,self.hp[y][x])
+                elif isinstance(v,int):
                     if v >= 10:
                         c = 'X'
                     else:
