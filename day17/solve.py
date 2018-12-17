@@ -41,35 +41,30 @@ for row in range(max(yclay)+1):
 for i in range(len(xclay)):
     ground[yclay[i]][xclay[i]] = '#'
 
-ground[0][500-mx] = '|'
-
-def dump(forceout, step,flowing):
+def dump(step,flowing):
     out = (step % 200 == 0) | forceout
     water = 0
+    standing = 0
     for y in range(len(ground)):
         if out:
             print ''.join(ground[y])
         if y >= miny:
             for c in ground[y]:
-                if c in ['|','~']:
+                if c == '~':
+                    water += 1
+                    standing += 1
+                if c == '|':
                     water += 1
     if out:
-        print 'Step:',step,'Flowing:',len(flow),'Total water:',water
-    return water
+        print 'Step:',step,'Flowing:',len(flow),'Total water:',water,'Standing:',standing
 
-# List of squares where water is flowing
-flow = [(500-mx,0)]
+# Start the well
+ground[0][500-mx] = '|'
+flow = [(500-mx,0)] # List of squares where water is flowing
 
 step = 0
-oldwater = -1
-water = 0
-oldflow = 0
-flowcount = len(flow)
-#while (water != oldwater) | (flowcount != oldflow):
 while True:
-    oldwater = water
-    oldflow = len(flow)
-    water = dump(False,step,oldflow)
+    dump(step,len(flow))
     newflow = []
     for (x,y) in flow:
         if y+1 >= len(ground):
@@ -114,5 +109,3 @@ while True:
 
     flow = newflow
     step += 1
-
-dump(True,step,len(flow))
