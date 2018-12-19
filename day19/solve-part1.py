@@ -90,24 +90,12 @@ if __name__=='__main__':
     #ip 3 was the first line, now its gone
     code = [x.strip() for x in open(sys.argv[1]).readlines()]
 
-    m.setregister(0,1)
-
     ipreg = 3
     ip = 0
     step = 0
 
-    # Basically had to include a debugger:
-    # stops after every line, and if you input a value:
-    # r v
-    # it sets register r to value v
-
     while ip < len(code):
         print step,'ip=',ip,m,code[ip]
-        user = raw_input()
-        if user:
-            r,v = user.split()
-            m.setregister(int(r),int(v))
-
         m.setregister(ipreg,ip)
         m.execute(code[ip])
         ip = m.getregister(ipreg)
@@ -117,5 +105,3 @@ if __name__=='__main__':
     print 'Final state:'
     print step,'ip=',ip,m
     
-    # Fucker computes the sum of the divisors of 10551326 = 2 * 5275663
-    # so it's 1 + 2 + 5275663 + 10551326 = 15826992
