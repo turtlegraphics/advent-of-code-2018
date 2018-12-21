@@ -11,7 +11,18 @@ if len(input) > 1000:
 else:
     print input
 
-check = '^' + str(Parser.Parser(input).root) + '$'
+reg = Parser.Parser(input)
+check = '^' + str(reg.root) + '$'
 if check == input:
     print 'Got it!'
+
+count = 0
+for v in reg.root:
+#    print v
+    count += 1
+    if count % 1000 == 0:
+        print count
+
+print 'paths:',count
+
 
