@@ -1,3 +1,7 @@
+#
+# I never used this module.  Realized it wasn't helpful and gave it up.  Probably doesn't work.
+#
+
 class Cell:
     def __init__(self,loc):
         self.neighbors = {'N':None,'S':None,'E':None,'W':None}
