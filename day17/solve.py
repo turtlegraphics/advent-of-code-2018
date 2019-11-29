@@ -42,7 +42,7 @@ for i in range(len(xclay)):
     ground[yclay[i]][xclay[i]] = '#'
 
 def dump(step,flowing):
-    out = (step % 200 == 0) | forceout
+    out = (step % 200 == 0)
     water = 0
     standing = 0
     for y in range(len(ground)):
